@@ -1,0 +1,12 @@
+apply(from = "$rootDir/common.gradle")
+
+android {
+    defaultConfig {
+        manifestPlaceholders += [
+            appName: "MediaServer",
+            pkgName: "mediaserver"
+        ]
+        versionCode = 1
+        versionName = "1.0.0"
+    }
+}
