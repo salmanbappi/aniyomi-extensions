@@ -1,13 +1,62 @@
-apply(from = "$rootDir/common.gradle")
+plugins {
+    id("com.android.application")
+    id("kotlin-android")
+    id("org.jetbrains.kotlin.plugin.serialization")
+}
 
 android {
+    namespace = "eu.kanade.tachiyomi.animeextension.en.mediaserver"
+    compileSdk = 34
+
     defaultConfig {
-        manifestPlaceholders += [
+        applicationId = "eu.kanade.tachiyomi.animeextension.en.mediaserver"
+        minSdk = 21
+        targetSdk = 34
+        versionCode = 1006
+        versionName = "14.1006"
+
+        manifestPlaceholders = [
             appName: "MediaServer",
-            pkgName: "mediaserver"
+            extClass: ".MediaServer",
+            nsfw: "0"
         ]
-        versionCode = 1
-        versionName = "1.0.0"
+    }
+
+    sourceSets {
+        main {
+            java.srcDirs = ['src/main/kotlin']
+        }
+    }
+
+    signingConfigs {
+        release {
+            storeFile file("../keystore.jks")
+            storePassword "ftpbd123"
+            keyAlias "dflix"
+            keyPassword "ftpbd123"
+        }
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            signingConfig signingConfigs.release
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_1_8
+        targetCompatibility = JavaVersion.VERSION_1_8
+    }
+
+    kotlinOptions {
+        jvmTarget = "1.8"
     }
 }
-// Trigger build
+
+dependencies {
+    implementation project(":core")
+    implementation("org.apache.commons:commons-text:1.10.0")
+    compileOnly libs.bundles.provided
+    implementation libs.bundles.common
+}
