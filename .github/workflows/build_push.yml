@@ -181,11 +181,11 @@ jobs:
           python ./.github/scripts/create-repo.py
 
       - name: Checkout repo branch
-        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+        uses: actions/checkout@v4
         with:
-          repository: salmanbappi/aniyomi-repo
+          repository: salmanbappi/extensions-repo
           token: ${{ secrets.BOT_PAT }}
-          ref: repo
+          ref: main
           path: repo
 
       - name: Merge repo
@@ -194,26 +194,24 @@ jobs:
           python ../${{ github.ref_name }}/.github/scripts/merge-repo.py '${{ needs.prepare.outputs.delete }}' '${{ github.ref_name }}/repo'
 
       - name: Deploy repo
-        uses: EndBug/add-and-commit@a94899bca583c204427a224a7af87c02f9b325d5 # v9.1.4
+        uses: EndBug/add-and-commit@v9
         with:
           message: "${{ needs.prepare.outputs.latestCommitMessage }}"
           cwd: "./repo"
-          # committer_name: github-actions[bot]
-          # committer_email: github-actions[bot]@users.noreply.github.com
 
       - name: Sync repo
         env:
           COMMIT_MESSAGE: ${{ needs.prepare.outputs.latestCommitMessage }}
         run: |
           cd repo
-          git config user.name "Yūzōnō"
-          git config user.email "yuzono@users.noreply.github.com"
-          git remote set-url origin https://github.com/salmanbappi/anime-repo.git
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git remote set-url origin https://github.com/salmanbappi/extensions-repo.git
           git fetch origin
-          git reset origin/repo
+          git reset origin/main
           git add -A
           git commit --amend -m "$COMMIT_MESSAGE" --no-sign --allow-empty || echo "No changes to commit"
-          git push origin HEAD:repo --force
+          git push origin HEAD:main --force
 
       - name: Purge cached index on jsDelivr
         run: |
